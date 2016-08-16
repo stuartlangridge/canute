@@ -6,7 +6,7 @@ Like Albert or Mutate or a bunch of other things. Does no indexing or anything i
 
 ## Plugins
 
-A plugin is an executable file, which lives in the `plugins` folder. To do a search, it is started as `pluginname --query "the query"` and is expected to return JSON which looks like
+A plugin is an executable file, which lives in the `plugins` folder. To do a search, it is started as `pluginname --query "the query"` and is expected to print to stdout JSON which looks like
 
 ```
 {
@@ -23,7 +23,7 @@ A plugin is an executable file, which lives in the `plugins` folder. To do a sea
 }
 ```
 
-There's no point in returning a million results because Canute will onyl display the top 8 or so anyway.
+There's no point in returning a million results because Canute will only display the top 8 or so anyway.
 
 If a result is chosen, the plugin is started as `pluginname --invoke unique-key-for-result`, at which point it should do whatever's sensible to display that result.
 
