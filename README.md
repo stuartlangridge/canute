@@ -30,3 +30,12 @@ If a result is chosen, the plugin is started as `pluginname --invoke unique-key-
 ## Supplied plugins
 
 In the plugins folder are some easy-to-understand examples, which does calculations (`2+5/3`), search installed applications, search `apt` for packages, and connect to an existing [recoll](http://www.lesbonscomptes.com/recoll) server for full text search.
+
+## Using the Super key to launch Canute
+
+* Install ksuperkey (on Ubuntu, from [the mehanik PPA](https://launchpad.net/~mehanik/+archive/ubuntu/ksuperkey))
+* Run (possibly from Startup Applications) `ksuperkey -e 'Super_L=Control_L|Alt_L|M'`
+* run Ubuntu Tweak and change the Dash's hotkey to be something else, otherwise you'll get Canute _and_ the Dash
+
+(thank you to [the Albert wiki](https://github.com/ManuelSchneid3r/albert/wiki/By-users-for-users#launch-albert-via-single-supermetawindows-key-an-easy-workaround) for these instructions)
+
