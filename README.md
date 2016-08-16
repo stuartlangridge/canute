@@ -39,3 +39,6 @@ In the plugins folder are some easy-to-understand examples, which does calculati
 
 (thank you to [the Albert wiki](https://github.com/ManuelSchneid3r/albert/wiki/By-users-for-users#launch-albert-via-single-supermetawindows-key-an-easy-workaround) for these instructions)
 
+## ugh, it looks ugly!
+
+Indeed it does. Need to fix that.
