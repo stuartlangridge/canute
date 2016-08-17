@@ -1,19 +1,28 @@
 #!/usr/bin/env python
-import sys, json, subprocess
+import sys, json, subprocess, mimetypes
 try:
     from recoll import recoll
 except ImportError:
     recoll = None
+
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gio, Gtk
 
 def query(q):
     if not recoll:
         print json.dumps({"results": []})
         return
 
+    mcache = {}
     db=recoll.connect()
     query=db.query()
     nres = query.execute(q)
-    res = query.fetchmany(5)
+    try:
+        res = query.fetchmany(8)
+    except:
+        print json.dumps({"results": []})
+        return
     out = []
     for r in res:
         title = r.title
@@ -22,11 +31,25 @@ def query(q):
             score = int(re.sub('[^0-9]', '', r.relevancyrating))
         except:
             score = 10
+        icon = "/usr/share/icons/hicolor/48x48/apps/recoll.png"
+        mimetype, encoding = mimetypes.guess_type(r.url)
+        if mimetype:
+            cached = mcache.get(mimetype)
+            if cached:
+                icon = cached
+            else:
+                gio_icon_name = Gio.content_type_get_icon(mimetype)
+                if gio_icon_name:
+                    themeicon = Gtk.IconTheme.get_default().choose_icon(gio_icon_name.get_names(), 512, 0)
+                    if themeicon:
+                        icon = themeicon.get_filename()
+                        mcache[mimetype] = icon
+
         out.append({
             "name": title,
             "key": r.url,
             "score": score,
-            "icon": "/usr/share/icons/hicolor/48x48/apps/recoll.png",
+            "icon": icon,
             "description": r.abstract
         })
 

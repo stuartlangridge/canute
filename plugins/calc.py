@@ -26,6 +26,9 @@ def query(q):
         "icon": "/usr/share/icons/Humanity/apps/22/accessories-calculator.svg",
         "description": None}]})
 
+def invoke(key):
+    pass # not really a lot we can do here.
+
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print >> sys.stderr, "Bad invocation %r" % (sys.argv,)

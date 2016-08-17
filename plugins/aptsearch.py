@@ -12,7 +12,7 @@ def query(q):
         themeicon = Gtk.IconTheme.get_default().choose_icon(deb.get_names(), 512, 0)
         if themeicon:
             icon = themeicon.get_filename()
-    o = subprocess.check_output(["apt-cache", "search", q])
+    o = subprocess.check_output(["apt-cache", "search", '^' + q])
     out = [{
         "name": line.split(" - ", 2)[0],
         "description": line.split(" - ", 2)[1],
