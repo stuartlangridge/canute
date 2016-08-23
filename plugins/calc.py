@@ -2,14 +2,14 @@
 import sys, json, re
 
 try:
-    from sympy import *
+    from sympy import sympify, symbols
     x, y, z = symbols("x y z")
 except:
     symbols = None
 
 def query(q):
     if not symbols:
-        if re.match(r"^[0-9\+\-\/\* \(\)]+$"):
+        if re.match(r"^[0-9\+\-\/\* \(\)]+$", q):
             print json.dumps({"results": [{"name": "Calculator", "key": "NOCALC", "score": 60,
                 "icon": "/usr/share/icons/Humanity/apps/22/accessories-calculator.svg",
                 "description": "Install python-sympy to make the calculator work"}]})
@@ -20,6 +20,10 @@ def query(q):
         print json.dumps({"results": []})
         return
     if str(expr) == q:
+        print json.dumps({"results": []})
+        return
+    res_is_numbers = re.search(r"^[0-9.]+$", str(expr))
+    if not res_is_numbers:
         print json.dumps({"results": []})
         return
     print json.dumps({"results": [{"name": str(expr), "key": str(expr), "score": 60,
