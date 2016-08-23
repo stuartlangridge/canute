@@ -22,7 +22,7 @@ def query(q):
     if str(expr) == q:
         print json.dumps({"results": []})
         return
-    res_is_numbers = re.search(r"^[0-9.]+$", str(expr))
+    res_is_numbers = re.search(r"^[0-9.-]+$", str(expr))
     if not res_is_numbers:
         print json.dumps({"results": []})
         return
