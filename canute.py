@@ -1,4 +1,4 @@
-import sys, json, cgi
+import sys, json, cgi, os
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Keybinder', '3.0')
@@ -16,6 +16,7 @@ class App(Gtk.Application):
 
     def startup(self, app):
         self.window = Gtk.ApplicationWindow()
+        self.app = app
 
         #self.window.set_type_hint(Gdk.WindowTypeHint.DOCK)
         screen = self.window.get_screen()
@@ -103,8 +104,14 @@ class App(Gtk.Application):
             print "Execute", plugin, key
             self.window.hide()
             proc = Gio.Subprocess.new([plugin, "--invoke", key], Gio.SubprocessFlags.NONE)
+            if key.startswith("special_") and hasattr(self, "execute_%s" % key):
+                getattr(self, "execute_%s" % key)()
             return True
         return False
+
+    def execute_special_restart(self):
+        os.system("bash -c 'sleep 2 && python %s' &" % (sys.argv[0],))
+        self.app.quit()
 
     def typing(self, entry, key):
         if key.keyval == Gdk.KEY_Escape:
