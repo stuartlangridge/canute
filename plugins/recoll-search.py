@@ -19,12 +19,24 @@ def query(q):
     query=db.query()
     nres = query.execute(q)
     try:
-        res = query.fetchmany(8)
+        res = query.fetchmany(30)
     except:
         print json.dumps({"results": []})
         return
     out = []
+    used_urls = {}
+    used_sigs = {}
     for r in res:
+        if len(out) > 8: continue
+        if r.url in used_urls:
+            used_urls[r.url] += 1
+            continue
+        id_tuple = (r.dbytes, r.filename, r.mtype, r.description, r.abstract)
+        if id_tuple in used_sigs:
+            used_sigs[id_tuple] += 1
+            continue
+        used_urls[r.url] = 1
+        used_sigs[id_tuple] = 1
         title = r.title
         if not title: title = r.filename
         try:
@@ -50,8 +62,17 @@ def query(q):
             "key": r.url,
             "score": score,
             "icon": icon,
-            "description": r.abstract
+            "description": r.abstract,
+            "id_tuple": id_tuple
         })
+
+    for x in out:
+        matches = used_urls[x["key"]]
+        if matches > 1:
+            x["name"] += " (%s matches)" % matches
+        smatches = used_sigs[x["id_tuple"]]
+        if smatches > 1:
+            x["name"] += " (%s copies)" % smatches
 
     print json.dumps({"results": out})
 
