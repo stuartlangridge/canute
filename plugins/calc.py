@@ -19,9 +19,12 @@ def query(q):
     except:
         print json.dumps({"results": []})
         return
-    if str(expr) == q:
+    if str(expr) == q and "/" not in q:
         print json.dumps({"results": []})
         return
+    res_is_fraction = re.search(r"^[0-9.-/]+$", str(expr))
+    if res_is_fraction:
+        expr = str(expr.evalf())
     res_is_numbers = re.search(r"^[0-9.-]+$", str(expr))
     if not res_is_numbers:
         print json.dumps({"results": []})
