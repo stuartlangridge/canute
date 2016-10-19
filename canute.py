@@ -31,6 +31,7 @@ class App(Gtk.Application):
         self.text_entry.connect("key-press-event", self.trap_arrows)
         self.text_entry.set_size_request(400, -1)
         self.current_query = ""
+        self.keypress_wait_timeout = None
         self.commands = Gtk.ListStore(
             str, # name
             GdkPixbuf.Pixbuf, #icon
@@ -122,7 +123,10 @@ class App(Gtk.Application):
             pass
         else:
             self.current_query = txt
-            self.populate_list(txt)
+            # start timer; we wait until a bit after the last keypress before starting
+            # plugins, so that typing a long string doesn't invoke them all needlessly
+            if self.keypress_wait_timeout: GLib.source_remove(self.keypress_wait_timeout)
+            self.keypress_wait_timeout = GLib.timeout_add(200, self.populate_list, txt)
 
     def key_activate(self, keystr):
         self.window.show_all()
@@ -132,6 +136,7 @@ class App(Gtk.Application):
         self.text_entry.grab_focus()
 
     def populate_list(self, query):
+        self.keypress_wait_timeout = None # so we don't try to clear this timeout when it's run already
         self.commands.clear()
         if not query.strip(): return
         f = Gio.File.new_for_path("/home/aquarius/Programs/Mine/canute/plugins/")
