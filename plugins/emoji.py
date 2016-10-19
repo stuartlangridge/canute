@@ -14,7 +14,7 @@ def query(q):
         print json.dumps({"results": []})
         return
     results = [
-        {"name": unichr(int(EMOJI[x], 16)), "key": x, "score": 100 if is_shortcode else 100 * len(q) / len(x),
+        {"name": unichr(int(EMOJI[x], 16)), "key": x, "score": 80 + (20 * len(q) / len(x)) if is_shortcode else 100 * len(q) / len(x),
         "icon": "/usr/share/icons/gnome/scalable/apps/accessories-character-map-symbolic.svg", "description": ":%s:" % x}
         for x in matches
     ]
