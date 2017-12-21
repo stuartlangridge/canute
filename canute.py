@@ -139,7 +139,7 @@ class App(Gtk.Application):
         self.keypress_wait_timeout = None # so we don't try to clear this timeout when it's run already
         self.commands.clear()
         if not query.strip(): return
-        f = Gio.File.new_for_path("/home/aquarius/Programs/Mine/canute/plugins/")
+        f = Gio.File.new_for_path("/home/aquarius/Programs/Mine/ARCHIVE/canute/plugins/")
         f.enumerate_children_async("access::can-execute,standard::*", 
             Gio.FileQueryInfoFlags.NONE, GLib.PRIORITY_DEFAULT, None, 
             self.plugins_list, query)

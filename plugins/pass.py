@@ -8,7 +8,16 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gio, Gtk
 
 def query(q):
-    out = subprocess.check_output(["pass", "find", q])
+    if "add new" in q.lower():
+        print json.dumps({"results": [{
+            "name": "Add new password",
+            "key": "add-new-password",
+            "score": 90,
+            "icon": "/usr/share/icons/Humanity/apps/48/password.svg",
+            "description": "Add a new password to pass"
+        }]})
+        return
+    out = subprocess.check_output(["pass", "find"] + q.split())
     out = ansi_escape.sub('', out)
     out = out.decode("utf8")
     out = out.replace(u"\u2514", " ").replace(u"\u251c", " ").replace(u"\u2502", " ").replace(u"\u2500", " ")
@@ -16,6 +25,7 @@ def query(q):
     current_indents = 0
     prefixes = []
     passes = []
+    scores = {}
     for line in out.split("\n")[1:]: # skip first line, which shows "Search terms"
         ls = line.lstrip()
         line_spaces = len(line) - len(ls)
@@ -41,16 +51,28 @@ def query(q):
             prefixes.append(ls)
             current_indents = line_indents
 
+    # scores: if we only entered one word, don't bother (pass will match it)
+    # if we entered multiple words, score less if you don't have them all
+    words = q.split()
+    if len(words) > 1:
+        for p in passes:
+            inwords = [x for x in words if x in p]
+            if len(inwords) < len(words):
+                scores[p] = 60
+
     results = [{
         "name": p,
         "key": p,
-        "score": 90,
+        "score": scores.get(p, 90),
         "icon": "/usr/share/icons/Humanity/apps/48/password.svg",
         "description": "Password"
     } for p in passes if p]
     print json.dumps({"results": results})
 
 def invoke(key):
+    if key == "add-new-password":
+        subprocess.Popen(["xterm", "-e", "sil-add-new-pass"])
+        return
     subprocess.Popen(["pass", "show", "-c", key])
 
 if __name__ == "__main__":

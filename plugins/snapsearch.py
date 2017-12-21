@@ -54,7 +54,7 @@ def query(q):
         {
             "name": "Install snap: %s (%s)" % (x.get("Name", "unknown snap"),x.get("Version", "latest")),
             "description": "Ready to install (%s)" % (x.get("Summary", "via gnome-software"),),
-            "score": 50,
+            "score": 5,
             "icon": debicon,
             "key": x.get("Name", "unknown")
         }
