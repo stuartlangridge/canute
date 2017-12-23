@@ -5,7 +5,7 @@ Canute
 A simple desktop launcher which runs plugins at runtime and doesn't index
 """
 
-import sys, os, random, json
+import sys, os, random, json, time
 from PyQt5.QtWidgets import QApplication, QDesktopWidget
 from PyQt5.QtQml import QQmlApplicationEngine, QQmlEngine, QQmlComponent
 from PyQt5.QtCore import (QAbstractListModel, Qt, pyqtSlot, QDir, 
@@ -97,7 +97,18 @@ class SearchResults(QAbstractListModel):
         p.finished.connect(lambda ec, es: self.process_finished(p, plugin, q, ec, es))
 
     def query_plugins(self, q):
-        for p in self.plugin_dir.entryList():
+        plugin_list = self.plugin_dir.entryList()
+
+        # if the first word is actually the name of a plugin, then
+        # run that one only
+        words = q.split()
+        if len(words) > 1:
+            for p in plugin_list:
+                base = os.path.splitext(os.path.basename(p))[0]
+                if base == words[0]:
+                    self.query_plugin(self.plugin_dir.filePath(p), " ".join(words[1:]))
+                    return
+        for p in plugin_list:
             self.query_plugin(self.plugin_dir.filePath(p), q)
 
     def update(self, q):
@@ -113,8 +124,21 @@ class SearchResults(QAbstractListModel):
 
     def invoke_data(self, data):
         print("invoking", data)
+
+        if data[b"key"].startswith("special_") and hasattr(self, "execute_%s" % data[b"key"]):
+            getattr(self, "execute_%s" % data[b"key"])()
+            return
+
         p = QProcess(self)
         p.start(data[b"plugin"], ["--invoke", data[b"key"]])
+
+    def execute_special_restart(self):
+        executable = sys.executable
+        args = sys.argv[:]
+        args.insert(0, sys.executable)
+        time.sleep(1)
+        print("Respawning")
+        os.execvp(executable, args)
 
     def rowCount(self, parent=None, *args, **kwargs):
         return len(self._results)
