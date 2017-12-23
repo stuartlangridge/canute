@@ -39,6 +39,6 @@ In the plugins folder are some easy-to-understand examples, which does calculati
 
 (thank you to [the Albert wiki](https://github.com/ManuelSchneid3r/albert/wiki/By-users-for-users#launch-albert-via-single-supermetawindows-key-an-easy-workaround) for these instructions)
 
-## ugh, it looks ugly!
+## Dependencies
 
-Indeed it does. Need to fix that.
+In addition to various pyqt bits, it requires [ShortyQt](https://github.com/Xcelled/shortyQt/) and [python-xlib](https://github.com/python-xlib/python-xlib) (warning! the version in Ubuntu 16.04 is not new enough).
