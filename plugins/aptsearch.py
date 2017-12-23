@@ -20,7 +20,7 @@ def query(q):
         "score": 10,
         "icon": icon
     } for line in o.split("\n") if line.strip() and " - " in line]
-    print json.dumps({"results": out})
+    print json.dumps({"results": out[:10]}) # don't bother returning more than 10
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

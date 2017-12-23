@@ -29,7 +29,7 @@ def query(q):
     if not res_is_numbers:
         print json.dumps({"results": []})
         return
-    print json.dumps({"results": [{"name": str(expr), "key": str(expr), "score": 60,
+    print json.dumps({"results": [{"name": str(expr), "key": str(expr), "score": 75,
         "icon": "/usr/share/icons/Humanity/apps/22/accessories-calculator.svg",
         "description": None}]})
 

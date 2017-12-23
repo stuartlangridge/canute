@@ -57,7 +57,9 @@ def query(q):
     if len(words) > 1:
         for p in passes:
             inwords = [x for x in words if x in p]
-            if len(inwords) < len(words):
+            if len(inwords) == 1 and len(words) > 2:
+                scores[p] = 0
+            elif len(inwords) < len(words):
                 scores[p] = 60
 
     results = [{
@@ -66,7 +68,7 @@ def query(q):
         "score": scores.get(p, 90),
         "icon": "/usr/share/icons/Humanity/apps/48/password.svg",
         "description": "Password"
-    } for p in passes if p]
+    } for p in passes if p and scores.get(p, 90) > 0]
     print json.dumps({"results": results})
 
 def invoke(key):
