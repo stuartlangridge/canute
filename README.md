@@ -4,6 +4,8 @@ Warning: this was written by Stuart for Stuart. It has a whole bunch of hardcode
 
 Like Albert or Mutate or a bunch of other things. Does no indexing or anything itself; instead, Canute relies on plugins. A plugin can be written in any language. When one presses the Canute hotkey (`Ctrl`-`Alt`-`M`), the Canute search box pops up. Entering a search runs all the plugins and shows the top 8 results.
 
+You want canute2.py. The old Gtk version is canute.py.
+
 ## Plugins
 
 A plugin is an executable file, which lives in the `plugins` folder. To do a search, it is started as `pluginname --query "the query"` and is expected to print to stdout JSON which looks like
