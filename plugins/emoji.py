@@ -14,8 +14,14 @@ def query(q):
         print json.dumps({"results": []})
         return
     results = [
-        {"name": unichr(int(EMOJI[x], 16)), "key": x, "score": 80 + (20 * len(q) / len(x)) if is_shortcode else 100 * len(q) / len(x),
-        "icon": "/usr/share/icons/gnome/scalable/apps/accessories-character-map-symbolic.svg", "description": ":%s:" % x}
+        {
+            "name": unichr(int(EMOJI[x], 16)), 
+            "key": x, 
+            "score": 80 + (20 * len(q) / len(x)) if is_shortcode else 100 * len(q) / len(x),
+            "icon": "https://raw.githubusercontent.com/emojione/emojione/2.2.7/assets/png/%s.png" % EMOJI[x],
+            #"/usr/share/icons/gnome/scalable/apps/accessories-character-map-symbolic.svg", 
+            "description": ":%s:" % x
+        }
         for x in matches
     ]
     print json.dumps({"results": results})
