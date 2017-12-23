@@ -57,10 +57,8 @@ def query(q):
     if len(words) > 1:
         for p in passes:
             inwords = [x for x in words if x in p]
-            if len(inwords) == 1 and len(words) > 2:
+            if len(words) != len(inwords):
                 scores[p] = 0
-            elif len(inwords) < len(words):
-                scores[p] = 60
 
     results = [{
         "name": p,
