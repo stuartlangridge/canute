@@ -5,7 +5,7 @@ Canute
 A simple desktop launcher which runs plugins at runtime and doesn't index
 """
 
-import sys, os, random, json, time
+import sys, os, random, json, time, signal
 from PyQt5.QtWidgets import QApplication, QDesktopWidget
 from PyQt5.QtQml import QQmlApplicationEngine, QQmlEngine, QQmlComponent
 from PyQt5.QtCore import (QAbstractListModel, Qt, pyqtSlot, QDir, 
@@ -13,6 +13,24 @@ from PyQt5.QtCore import (QAbstractListModel, Qt, pyqtSlot, QDir,
 from PyQt5.QtGui import QKeySequence
 
 from shortyQt import Shorty
+
+# Make sure Ctrl-C quits
+# https://coldfix.de/2016/11/08/pyqt-boilerplate/
+# This is bullshit that I have to do this, to be clear, Qt people.
+# You are horrible and you should feel guilty every day.
+# Doing this also stops Qt swallowing redirected stdout.
+def setup_interrupt_handling():
+    signal.signal(signal.SIGINT, _interrupt_handler)
+    safe_timer(50, lambda: None)
+def _interrupt_handler(signum, frame):
+    QApplication.quit()
+def safe_timer(timeout, func, *args, **kwargs):
+    def timer_event():
+        try:
+            func(*args, **kwargs)
+        finally:
+            QTimer.singleShot(timeout, timer_event)
+    QTimer.singleShot(timeout, timer_event)
 
 class SortedShortenedSearchResults(QSortFilterProxyModel):
     @pyqtSlot(str)
@@ -157,14 +175,18 @@ class SearchResults(QAbstractListModel):
 
 
 def reveal(win):
-    win.setVisible(True)
-    win.showNormal()
-    print("summon")
-
+    if win.isVisible():
+        print("Super pressed while visible; hiding")
+        win.setVisible(False)
+    else:
+        print("Super pressed; showing")
+        win.setVisible(True)
+        win.showNormal()
 
 def main():
-
+    print("Canute startup", time.asctime())
     app = QApplication(sys.argv)
+    setup_interrupt_handling()
     engine = QQmlApplicationEngine()
     context = engine.rootContext()
     model = SearchResults()

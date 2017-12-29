@@ -10,7 +10,7 @@ ApplicationWindow {
     height: wrapper.anchors.topMargin + wrapper.height + wrapper.anchors.topMargin
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
     x: Screen.width / 2 - width / 2
-    y: Screen.height / 2 - tbox.height / 2
+    y: Screen.height * 0.4
     title: "Canute"
     color: "transparent"
 
@@ -21,6 +21,7 @@ ApplicationWindow {
     onVisibleChanged: {
         if (visible && tibox.text.length > 0) tibox.selectAll();
         if (visible && tibox.text.length == 0) results.height = 0;
+        if (visible) root.y = Screen.height * 0.4
     }
 
     DropShadow {
