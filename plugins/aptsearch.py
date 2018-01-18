@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, json, subprocess
+import sys, json, subprocess, os
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio, Gtk
@@ -20,7 +20,10 @@ def query(q):
         "score": 10,
         "icon": icon
     } for line in o.split("\n") if line.strip() and " - " in line]
-    print json.dumps({"results": out[:10]}) # don't bother returning more than 10
+    print json.dumps({"results": out[:3]}) # don't bother returning more than 3
+
+def invoke(q):
+    os.system("xdg-open apt:%s &" % (q,))
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
