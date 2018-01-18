@@ -182,6 +182,8 @@ def reveal(win):
         print("Super pressed; showing")
         win.setVisible(True)
         win.showNormal()
+        win.raise_()
+        win.requestActivate()
 
 def main():
     print("Canute startup", time.asctime())
