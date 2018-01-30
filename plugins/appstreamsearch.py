@@ -51,7 +51,7 @@ def query(q):
         else:
             x["icon"] = icons[0]
 
-    print json.dumps({"results": out}[:3])
+    print json.dumps({"results": out[:3]})
 
 def invoke(key):
     subprocess.Popen(["gnome-software", "--details-pkg=%s" % key])
