@@ -59,10 +59,11 @@ class SearchResults(QAbstractListModel):
     IconRole = Qt.UserRole + 4
     DescriptionRole = Qt.UserRole + 5
     PluginRole = Qt.UserRole + 6
+    IconInvertRole = Qt.UserRole + 7
 
     _roles = {NameRole: b"name", KeyRole: b"key", ScoreRole: b"score",
         IconRole: b"icon", DescriptionRole: b"description",
-        PluginRole: b"plugin"}
+        PluginRole: b"plugin", IconInvertRole: b"inverted_icon"}
 
     def __init__(self):
         super(SearchResults, self).__init__()

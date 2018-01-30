@@ -140,6 +140,15 @@ ApplicationWindow {
                     anchors.leftMargin: wrapper.anchors.topMargin
                 }
 
+                Colorize {
+                    anchors.fill: rowicon
+                    source: rowicon
+                    hue: 0.0
+                    saturation: 0.5
+                    lightness: 1
+                    visible: !!inverted_icon ? true : false
+                }
+
                 Text {
                     id: shortcut
                     visible: model.index <= 9
