@@ -138,6 +138,9 @@ ApplicationWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: wrapper.anchors.topMargin
+                    // svgs get rendered blurry unless you tell them a width and height
+                    sourceSize.width: width
+                    sourceSize.height: height
                 }
 
                 Colorize {
