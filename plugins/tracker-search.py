@@ -8,7 +8,7 @@ from gi.repository import Gio, Gtk, Tracker
 
 def query(q):
     sparql = ("SELECT fts:rank(?f) nie:url(?f) fts:snippet(?f, '', '', '', 3)"
-        "WHERE { ?f fts:match '\"%s\"' } order by desc(fts:rank(?f))") % q
+        "WHERE { ?f fts:match '\"%s\"' } order by desc(fts:rank(?f))") % q.replace("'", "\\'")
     conn = Tracker.SparqlConnection.get (None)
     cursor = conn.query (sparql, None)
 
