@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, json, subprocess, mimetypes
+import sys, json, subprocess, mimetypes, urllib, os
 try:
     from recoll import recoll
 except ImportError:
@@ -77,7 +77,12 @@ def query(q):
     print json.dumps({"results": out})
 
 def invoke(key):
-    subprocess.Popen(["nautilus", key])
+    subprocess.Popen([
+        "dbus-send", "--session", "--type=method_call",
+        '--dest=org.freedesktop.FileManager1', "/org/freedesktop/FileManager1","org.freedesktop.FileManager1.ShowItems",
+        'array:string:%s' % key,
+        'string:""'
+    ])
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

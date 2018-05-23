@@ -6,9 +6,11 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Tracker', '1.0')
 from gi.repository import Gio, Gtk, Tracker
 
+# if you want to search for a phrase, put the quotes in the query.
+
 def query(q):
-    sparql = ("SELECT fts:rank(?f) nie:url(?f) fts:snippet(?f, '', '', '', 3)"
-        "WHERE { ?f fts:match '\"%s\"' } order by desc(fts:rank(?f))") % q.replace("'", "\\'")
+    sparql = ("SELECT fts:rank(?f) nie:url(?f) fts:snippet(?f, '', '', '', 3) "
+        "WHERE { ?f fts:match '%s' } order by desc(fts:rank(?f))") % q.replace("'", "\\'")
     conn = Tracker.SparqlConnection.get (None)
     cursor = conn.query (sparql, None)
 
@@ -42,7 +44,6 @@ def query(q):
             "icon": icon,
             "description": description
         })
-
     print(json.dumps({"results": results}))
 
 def invoke(key):
