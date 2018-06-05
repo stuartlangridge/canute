@@ -6,16 +6,17 @@ def query(q):
     if m:
         base = m.groups()[1].upper()
         symbols = m.groups()[2].upper()
-        url = "http://api.fixer.io/latest?base=%s&symbols=%s" % (base, symbols)
+        code = "%s_%s" % (base, symbols)
+        url = "https://free.currencyconverterapi.com/api/v5/convert?q=%s&compact=y" % (code)
         try:
             fp = urllib.urlopen(url)
             data = fp.read()
             d = json.loads(data)
-            r = d["rates"][symbols]
+            r = d[code]["val"]
             res = float(m.groups()[0]) * r
             print json.dumps({"results": [{"name": "%s%s" % (res, symbols), "key": "%s%s" % (res, symbols), "score": 100,
                 "icon": "/usr/share/icons/Humanity/emblems/48/emblem-money.svg",
-                "description": "currency conversion from fixer.io"}]})
+                "description": "currency conversion from free.currencyconverterapi.com"}]})
         except Exception as e:
             print json.dumps({"results": []})
     else:
