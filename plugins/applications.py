@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys, json
 import gi
+import time
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio, Gtk
 
@@ -40,6 +41,7 @@ def query(q):
 def invoke(key):
     appinfo = Gio.DesktopAppInfo.new(key)
     appinfo.launch()
+    time.sleep(5) # give it time to start
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
