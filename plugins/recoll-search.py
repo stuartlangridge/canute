@@ -27,15 +27,16 @@ def query(q):
     used_urls = {}
     used_sigs = {}
     for r in res:
+        esc_url = urllib.quote(r.url, safe=':/')
         if len(out) > 8: continue
-        if r.url in used_urls:
-            used_urls[r.url] += 1
+        if esc_url in used_urls:
+            used_urls[esc_url] += 1
             continue
         id_tuple = (r.dbytes, r.filename, r.mtype, r.description, r.abstract)
         if id_tuple in used_sigs:
             used_sigs[id_tuple] += 1
             continue
-        used_urls[r.url] = 1
+        used_urls[esc_url] = 1
         used_sigs[id_tuple] = 1
         title = r.title
         if not title: title = r.filename
@@ -44,7 +45,7 @@ def query(q):
         except:
             score = 10
         icon = "/usr/share/icons/hicolor/48x48/apps/recoll.png"
-        mimetype, encoding = mimetypes.guess_type(r.url)
+        mimetype, encoding = mimetypes.guess_type(esc_url)
         if mimetype:
             cached = mcache.get(mimetype)
             if cached:
@@ -59,7 +60,7 @@ def query(q):
 
         out.append({
             "name": title,
-            "key": r.url,
+            "key": esc_url,
             "score": score,
             "icon": icon,
             "description": r.abstract,
