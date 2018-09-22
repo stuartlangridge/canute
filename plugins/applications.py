@@ -25,10 +25,16 @@ def query(q):
                 themeicon = None
                 if hasattr(gicon, "get_names"):
                     themeicon = Gtk.IconTheme.get_default().choose_icon(gicon.get_names(), 512, 0)
+                elif gicon.to_string().startswith("/"):
+                    themeicon = gicon.to_string()
                 else:
                     themeicon = Gtk.IconTheme.get_default().choose_icon([gicon.to_string()], 512, 0)
                 if themeicon:
-                    icon = themeicon.get_filename()
+                    if type(themeicon) == str and themeicon.startswith("/"):
+                        # probably a full path; just set it
+                        icon = themeicon
+                    else:
+                        icon = themeicon.get_filename()
             out.append({
                 "name": dai.get_display_name(),
                 "key": app,
