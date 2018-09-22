@@ -18,7 +18,7 @@ def query(q):
             "name": unichr(int(EMOJI[x], 16)), 
             "key": x, 
             "score": 80 + (20 * len(q) / len(x)) if is_shortcode else 100 * len(q) / len(x),
-            "icon": "https://raw.githubusercontent.com/emojione/emojione/2.2.7/assets/png/%s.png" % EMOJI[x],
+            "icon": "https://raw.githubusercontent.com/EmojiTwo/emojitwo/master/png/%s.png" % EMOJI[x],
             #"/usr/share/icons/gnome/scalable/apps/accessories-character-map-symbolic.svg", 
             "description": ":%s:" % x
         }
