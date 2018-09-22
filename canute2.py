@@ -32,7 +32,8 @@ def safe_timer(timeout, func, *args, **kwargs):
             QTimer.singleShot(timeout, timer_event)
     QTimer.singleShot(timeout, timer_event)
 
-class SortedShortenedSearchResults(QSortFilterProxyModel):
+class SortedSearchResults(QSortFilterProxyModel):
+    """First we sort the results by score..."""
     @pyqtSlot(str)
     def search_input(self, q):
         return self.sourceModel().search_input(q)
@@ -44,13 +45,36 @@ class SortedShortenedSearchResults(QSortFilterProxyModel):
         data = dict([(role[1], self.data(qmi, role[0])) for role in sm._roles.items()])
         return sm.invoke_data(data)
 
+class ShortenedSearchResults(QSortFilterProxyModel):
+    """...and then we filter them to the first ten only.
+    This is done in two separate models because you can't filter
+    and sort in one model; the filterAcceptsRow function gets told
+    the index of this result in the underlying source model, before
+    sorting, and you can't get the index _after_ sorting because
+    sorting isn't done until after filtering!"""
+    @pyqtSlot(str)
+    def search_input(self, q):
+        return self.sourceModel().search_input(q)
+
+    @pyqtSlot(int)
+    def invoke(self, row_index):
+        self.sourceModel().invoke(row_index)
+
     def filterAcceptsRow(self, source_row_idx, source_parent):
-        index = self.sourceModel().index(source_row_idx, 0, source_parent)
-        data = repr([self.sourceModel().data(index, Qt.UserRole + k) for k in range(1,6)])
-        #print("filtering?", source_row_idx, index, data)
-        if source_row_idx > 10: return False
-        return super(SortedShortenedSearchResults, self).filterAcceptsRow(
+        #index = self.sourceModel().index(source_row_idx, 0, source_parent)
+        #data = repr([self.sourceModel().data(index, Qt.UserRole + k) for k in range(1,6)])
+        #print("filtering? sri=%s, ir=%s, name=%s, score=%s" % (
+        #    source_row_idx, index.row(),
+        #    self.sourceModel().data(index, Qt.UserRole + 1)[:20],
+        #    self.sourceModel().data(index, Qt.UserRole + 3)))
+        
+        if source_row_idx > 10:
+            #print("Removing %s at index %s" % (self.sourceModel().data(index, Qt.UserRole + 1), source_row_idx))
+            return False
+        return super(ShortenedSearchResults, self).filterAcceptsRow(
             source_row_idx, source_parent)
+
+
 
 class SearchResults(QAbstractListModel):
     NameRole = Qt.UserRole + 1
@@ -108,7 +132,6 @@ class SearchResults(QAbstractListModel):
             self.add_results(r)
 
     def query_plugin(self, plugin, q):
-        #print("Calling", plugin)
         p = QProcess(self)
         self._processes.append(p)
         p.start(plugin, ["--query", q])
@@ -187,17 +210,25 @@ def reveal(win):
         win.requestActivate()
 
 def main():
+    def woot(*args):
+        print("woot args", args)
+        sortedModel.invalidate()
+        shortenedModel.invalidateFilter()
+
     print("Canute startup", time.asctime())
     app = QApplication(sys.argv)
     setup_interrupt_handling()
     engine = QQmlApplicationEngine()
     context = engine.rootContext()
     model = SearchResults()
-    sortedModel = SortedShortenedSearchResults()
+    sortedModel = SortedSearchResults()
     sortedModel.setSourceModel(model)
     sortedModel.setSortRole(model.ScoreRole)
     sortedModel.sort(0, Qt.DescendingOrder)
-    context.setContextProperty("pyresults", sortedModel)
+    shortenedModel = ShortenedSearchResults()
+    shortenedModel.setSourceModel(sortedModel)
+    model.rowsInserted.connect(woot)
+    context.setContextProperty("pyresults", shortenedModel)
     engine.load(os.path.join(os.path.split(__file__)[0], 'canute2.qml')) # must load once we've assigned the model
 
     SHORTCUT_SHOW = QKeySequence("Ctrl+Alt+M")

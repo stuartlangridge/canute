@@ -91,7 +91,7 @@ ApplicationWindow {
         Connections {
             target: pyresults
             function resetHeight() {
-                results.height = pyresults.rowCount() * tbox.height
+                results.height = Math.min(pyresults.rowCount(), 10) * tbox.height
                 results.currentIndex = -1
             }
             onRowsInserted: resetHeight()
