@@ -1,23 +1,37 @@
 #!/usr/bin/env python
-import sys, json, re, urllib
+import sys, json, re, urllib, decimal
+from xml.dom import minidom
 
 def query(q):
     m = re.match(r"^\s*([0-9]+)\s*([A-Za-z][A-Za-z][A-Za-z])\s+in\s+([A-Za-z][A-Za-z][A-Za-z])\s*$", q)
     if m:
         base = m.groups()[1].upper()
-        symbols = m.groups()[2].upper()
-        code = "%s_%s" % (base, symbols)
-        url = "https://free.currencyconverterapi.com/api/v5/convert?q=%s&compact=y" % (code)
+        target = m.groups()[2].upper()
+        url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
         try:
             fp = urllib.urlopen(url)
             data = fp.read()
-            d = json.loads(data)
-            r = d[code]["val"]
-            res = float(m.groups()[0]) * r
-            print json.dumps({"results": [{"name": "%s%s" % (res, symbols), "key": "%s%s" % (res, symbols), "score": 100,
+            fp.close()
+            dom = minidom.parseString(data)
+            curs = dict([(x.getAttribute("currency"), decimal.Decimal(x.getAttribute("rate")))
+                for x in dom.getElementsByTagName("Cube")[0].getElementsByTagName("Cube")[0].getElementsByTagName("Cube")])
+            base_value = decimal.Decimal(m.groups()[0])
+            if base == "EUR":
+                base_eur = base_value
+            else:
+                base_eur = base_value / curs[base]
+            if target == "EUR":
+                target_value = base_eur
+            else:
+                target_value = base_eur * curs[target]
+            res = "{:.2f}{}".format(target_value, target)
+            print json.dumps({"results": [{
+                "name": res,
+                "key": res, "score": 100,
                 "icon": "/usr/share/icons/Humanity/emblems/48/emblem-money.svg",
-                "description": "currency conversion from free.currencyconverterapi.com"}]})
+                "description": "currency conversion from ecb.europa.eu"}]})
         except Exception as e:
+            raise
             print json.dumps({"results": []})
     else:
         print json.dumps({"results": []})
