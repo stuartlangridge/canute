@@ -31,7 +31,6 @@ def query(q):
                 "icon": "/usr/share/icons/Humanity/emblems/48/emblem-money.svg",
                 "description": "currency conversion from ecb.europa.eu"}]})
         except Exception as e:
-            raise
             print json.dumps({"results": []})
     else:
         print json.dumps({"results": []})
